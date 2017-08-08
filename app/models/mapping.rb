@@ -23,7 +23,7 @@ class Mapping < ApplicationRecord
   validates :external_site, :external_id, presence: true
   # Right now, we want to ensure only one external id per media per site
   validates :media_id, uniqueness: { scope: %i[media_type external_site] }
-  validates :media, polymorphism: { type: Media }
+  validates :media, polymorphism: { type: [Media, Episode] }
 
   def self.lookup(site, id)
     find_by(external_site: site, external_id: id).try(:media)
@@ -34,7 +34,7 @@ class Mapping < ApplicationRecord
       function_score: {
         script_score: {
           lang: 'expression',
-          script: "max(log10(doc['user_count'].value), 1) * _score",
+          script: "max(log10(doc['user_count'].value), 1) * _score"
         },
         query: {
           bool: {
@@ -49,7 +49,7 @@ class Mapping < ApplicationRecord
               { multi_match: {
                 fields: %w[titles.* abbreviated_titles],
                 query: info[:title],
-                boost: 1.2,
+                boost: 1.2
               } },
               ({ match: {
                 subtype: info[:subtype]
