@@ -34,7 +34,7 @@ class Mapping < ApplicationRecord
       function_score: {
         script_score: {
           lang: 'expression',
-          script: "max(log10(doc['user_count'].value), 1) * _score",
+          script: "max(log10(doc['user_count'].value), 1) * _score"
         },
         query: {
           bool: {
@@ -49,7 +49,7 @@ class Mapping < ApplicationRecord
               { multi_match: {
                 fields: %w[titles.* abbreviated_titles],
                 query: info[:title],
-                boost: 1.2,
+                boost: 1.2
               } },
               ({ match: {
                 subtype: info[:subtype]
